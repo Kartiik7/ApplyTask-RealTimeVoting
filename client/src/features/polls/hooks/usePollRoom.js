@@ -22,7 +22,8 @@ const usePollRoom = (pollId) => {
   useEffect(() => {
     if (!pollId) return;
 
-    const newSocket = io(import.meta.env.VITE_API_BASE || 'http://localhost:5000', {
+    const newSocket = io(import.meta.env.VITE_API_URL, {
+        withCredentials: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
     });
