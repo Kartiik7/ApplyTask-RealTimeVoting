@@ -20,7 +20,7 @@ const AppError = require('./shared/utils/AppError');
 // ... (existing code)
 
 // Handle 404
-app.all('*', (req, res, next) => {
+app.all(/(.*)/, (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 

@@ -1,0 +1,11 @@
+TypeError: Missing parameter name at index 1: *; visit https://git.new/pathToRegexpError for info
+    at name (D:\Projects 2026\applyo\server\node_modules\path-to-regexp\dist\index.js:96:19)
+    at parse (D:\Projects 2026\applyo\server\node_modules\path-to-regexp\dist\index.js:113:68)
+    at pathToRegexp (D:\Projects 2026\applyo\server\node_modules\path-to-regexp\dist\index.js:267:58)
+    at Object.match (D:\Projects 2026\applyo\server\node_modules\path-to-regexp\dist\index.js:237:30)
+    at matcher (D:\Projects 2026\applyo\server\node_modules\router\lib\layer.js:86:23)
+    at new Layer (D:\Projects 2026\applyo\server\node_modules\router\lib\layer.js:93:62)
+    at router.route (D:\Projects 2026\applyo\server\node_modules\router\index.js:428:17)
+    at app.route (D:\Projects 2026\applyo\server\node_modules\express\lib\application.js:257:22)
+    at app.all (D:\Projects 2026\applyo\server\node_modules\express\lib\application.js:495:20)
+    at Object.<anonymous> (D:\Projects 2026\applyo\server\src\app.js:27:5)
