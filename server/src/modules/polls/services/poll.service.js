@@ -3,11 +3,12 @@ const VoteTracking = require('../models/VoteTracking');
 const pollEvents = require('../../../shared/infra/events/pollEvents');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+const AppError = require('../../../shared/utils/AppError');
 
 class PollService {
   async createNewPoll(question, pollOptions) {
     if (!question || !pollOptions || pollOptions.length < 2) {
-      throw { status: 400, message: 'Question and at least 2 options are required' };
+      throw new AppError('Question and at least 2 options are required', 400);
     }
 
     const sanitizedOptions = pollOptions
@@ -17,7 +18,7 @@ class PollService {
     const distinctOptions = [...new Set(sanitizedOptions)];
 
     if (distinctOptions.length < 2) {
-      throw { status: 400, message: 'At least 2 unique non-empty options are required' };
+      throw new AppError('At least 2 unique non-empty options are required', 400);
     }
 
     const pollOptionsWithVotes = distinctOptions.map(optionText => ({ text: optionText, votes: 0 }));
@@ -31,14 +32,14 @@ class PollService {
   async getPollById(pollId) {
     const fetchedPoll = await Poll.findById(pollId);
     if (!fetchedPoll) {
-      throw { status: 404, message: 'Poll not found' };
+      throw new AppError('Poll not found', 404);
     }
     return fetchedPoll;
   }
 
   async submitVote(pollId, optionIndex, voteToken, ipAddress, userAgent) {
     if (!voteToken || typeof voteToken !== 'string' || voteToken.trim().length === 0) {
-      throw { status: 400, message: 'Valid vote token is required' };
+      throw new AppError('Valid vote token is required', 400);
     }
 
     const hashedVoteToken = crypto.createHash('sha256').update(voteToken.trim()).digest('hex');
@@ -56,7 +57,7 @@ class PollService {
     });
 
     if (existingRecentVote) {
-       throw { status: 403, message: 'You can vote again on this poll after 5 minutes.' };
+       throw new AppError('You can vote again on this poll after 5 minutes.', 403);
     }
 
     const session = await mongoose.startSession();
@@ -66,11 +67,11 @@ class PollService {
       await session.withTransaction(async () => {
         const targetPoll = await Poll.findById(pollId).session(session);
         if (!targetPoll) {
-          throw { status: 404, message: 'Poll not found' };
+          throw new AppError('Poll not found', 404);
         }
 
         if (optionIndex < 0 || optionIndex >= targetPoll.options.length) {
-          throw { status: 400, message: 'Invalid option' };
+          throw new AppError('Invalid option', 400);
         }
 
         try {
@@ -86,7 +87,7 @@ class PollService {
           console.log('[VoteTracking Error]', voteTrackingError.code, voteTrackingError.message);
           if (voteTrackingError.code === 11000) {
             // Check which index caused the violation if possible, otherwise generic message
-            throw { status: 403, message: 'You have already voted in this poll (Duplicate IP or Token)' };
+            throw new AppError('You have already voted in this poll (Duplicate IP or Token)', 403);
           }
           throw voteTrackingError;
         }
@@ -104,7 +105,7 @@ class PollService {
       });
     } catch (error) {
        // If the error is one we threw inside the transaction, rethrow it
-       if (error.status) throw error;
+       if (error instanceof AppError) throw error;
        // Otherwise it's a DB/System error
        throw error;
     } finally {
