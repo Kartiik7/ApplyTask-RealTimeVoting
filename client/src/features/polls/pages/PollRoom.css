@@ -1,0 +1,55 @@
+.poll-room-error {
+  text-align: center;
+}
+
+.poll-room-error-message {
+  margin-bottom: 1rem;
+}
+
+.poll-room-header {
+  margin-bottom: 10px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.poll-room-header.connected {
+  color: green;
+}
+
+.poll-room-header.disconnected {
+  color: orange;
+}
+
+.poll-room-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.poll-room-status-dot.connected {
+  background-color: green;
+}
+
+.poll-room-status-dot.disconnected {
+  background-color: orange;
+}
+
+.poll-room-total-votes {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.poll-room-share-input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.poll-room-copy-btn {
+  margin-top: 0.5rem;
+  width: 100%;
+}
