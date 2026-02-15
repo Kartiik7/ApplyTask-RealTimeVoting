@@ -27,8 +27,10 @@ exports.handleVotePoll = asyncHandler(async (req, res) => {
   // Normalize IPv6 localhost
   if (ipAddress === '::1') ipAddress = '127.0.0.1';
 
-  console.log(`[Vote Attempt] Poll: ${pollId}, IP: ${ipAddress}, Token: ${voteToken.substring(0, 10)}...`);
+  const userAgent = req.headers['user-agent'] || 'unknown';
 
-  const pollWithNewVote = await pollService.submitVote(pollId, optionIndex, voteToken, ipAddress);
+  console.log(`[Vote Attempt] Poll: ${pollId}, IP: ${ipAddress}, UA: ${userAgent.substring(0, 20)}...`);
+
+  const pollWithNewVote = await pollService.submitVote(pollId, optionIndex, voteToken, ipAddress, userAgent);
   res.status(200).json({ success: true, poll: pollWithNewVote });
 });

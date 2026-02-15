@@ -3,13 +3,15 @@ const router = express.Router();
 const { handleCreatePoll, handleGetPoll, handleVotePoll } = require('../controllers/poll.controller');
 const rateLimit = require('express-rate-limit');
 
-// Rate limiting for voting: 5 votes per 5 minutes per IP
 const voteLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, 
-    max: 5, 
-    message: { success: false, error: 'Too many vote attempts. Try again later.' },
+    max: 10, 
+    message: { success: false, error: 'Too many vote attempts for this poll. Try again later.' },
     standardHeaders: true, 
-    legacyHeaders: false,
+    keyGenerator: (req) => {
+        return req.ip + "_" + req.params.id;
+    },
+    validate: { trustProxy: false }
 });
 
 router.post('/', handleCreatePoll);

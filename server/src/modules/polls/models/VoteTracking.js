@@ -15,14 +15,19 @@ const VoteTrackingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    deviceHash: {
+        type: String,
+        required: false
+    },
     votedAt: {
         type: Date,
         default: Date.now
     }
 });
 
-// Compound index to ensure unique vote per user (IP + Token) per poll
 VoteTrackingSchema.index({ pollId: 1, ipAddress: 1 }, { unique: true });
 VoteTrackingSchema.index({ pollId: 1, tokenHash: 1 }, { unique: true });
+
+VoteTrackingSchema.index({ pollId: 1, deviceHash: 1, votedAt: 1 });
 
 module.exports = mongoose.model('VoteTracking', VoteTrackingSchema);

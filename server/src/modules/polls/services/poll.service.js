@@ -36,12 +36,28 @@ class PollService {
     return fetchedPoll;
   }
 
-  async submitVote(pollId, optionIndex, voteToken, ipAddress) {
+  async submitVote(pollId, optionIndex, voteToken, ipAddress, userAgent) {
     if (!voteToken || typeof voteToken !== 'string' || voteToken.trim().length === 0) {
       throw { status: 400, message: 'Valid vote token is required' };
     }
 
     const hashedVoteToken = crypto.createHash('sha256').update(voteToken.trim()).digest('hex');
+    
+    const deviceHash = crypto
+      .createHash('sha256')
+      .update(ipAddress + (userAgent || '') + pollId)
+      .digest('hex');
+
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const existingRecentVote = await VoteTracking.findOne({
+      pollId,
+      deviceHash,
+      votedAt: { $gt: fiveMinutesAgo }
+    });
+
+    if (existingRecentVote) {
+       throw { status: 403, message: 'You can vote again on this poll after 5 minutes.' };
+    }
 
     const session = await mongoose.startSession();
     let pollWithNewVote;
@@ -58,11 +74,12 @@ class PollService {
         }
 
         try {
-          // Track vote by Token AND IP
+          // Track vote by Token AND IP AND DeviceHash
           await VoteTracking.create([{ 
               pollId, 
               tokenHash: hashedVoteToken,
-              ipAddress: ipAddress 
+              ipAddress: ipAddress,
+              deviceHash: deviceHash
           }], { session });
 
         } catch (voteTrackingError) {
