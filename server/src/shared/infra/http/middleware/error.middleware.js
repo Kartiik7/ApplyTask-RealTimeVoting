@@ -11,7 +11,6 @@ const sendErrorDev = (err, res) => {
 };
 
 const sendErrorProd = (err, res) => {
-  // Operational, trusted error: send message to client
   if (err.isOperational) {
     res.status(err.statusCode).json({
       success: false,
@@ -19,7 +18,6 @@ const sendErrorProd = (err, res) => {
       error: err.message,
     });
   } else {
-    // Programming or other unknown error: don't leak details
     console.error('ERROR 💥', err);
     res.status(500).json({
       success: false,
@@ -36,7 +34,6 @@ const globalErrorHandler = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else {
-    // Handle Mongoose specific errors
     let error = { ...err, message: err.message };
     
     if (err.name === 'CastError') error = new AppError(`Invalid ${err.path}: ${err.value}`, 400);

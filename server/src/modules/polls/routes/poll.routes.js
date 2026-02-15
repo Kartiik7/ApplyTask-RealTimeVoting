@@ -11,7 +11,7 @@ const voteLimiter = rateLimit({
     keyGenerator: (req) => {
         return req.ip + "_" + req.params.id;
     },
-    validate: { trustProxy: false }
+    validate: { ip: false }
 });
 
 router.post('/', handleCreatePoll);

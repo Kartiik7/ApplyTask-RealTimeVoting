@@ -6,9 +6,29 @@ const config = require('./config');
 
 const app = express();
 
+// Trust Proxy for production (correct IP detection behind proxies like Render)
+if (config.env === 'production') {
+  app.set('trust proxy', 1);
+}
+
+// Dynamic CORS Configuration
+// Dynamic CORS Configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (config.allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+};
+
 // Middleware
 app.use(helmet());
-app.use(cors({ origin: config.clientUrl }));
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
