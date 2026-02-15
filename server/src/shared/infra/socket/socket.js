@@ -2,14 +2,10 @@ const socketIO = require('socket.io');
 const mongoose = require('mongoose');
 const Poll = require('../../../modules/polls/models/Poll');
 const config = require('../../../config');
+const pollEvents = require('../events/pollEvents');
 
 let socketServer;
 
-/**
- * Initializes the Socket.IO server.
- * @param {Object} httpServer - The HTTP server instance.
- * @returns {Object} The Socket.IO server instance.
- */
 const initializeSocketIO = (httpServer) => {
     socketServer = socketIO(httpServer, {
         cors: {
@@ -46,14 +42,16 @@ const initializeSocketIO = (httpServer) => {
         });
     });
 
+    // Listen for domain events and broadcast
+    pollEvents.on('voteUpdated', (updatedPoll) => {
+        if (socketServer && updatedPoll && updatedPoll._id) {
+            socketServer.to(updatedPoll._id.toString()).emit('updateResults', updatedPoll);
+        }
+    });
+
     return socketServer;
 };
 
-/**
- * Returns the initialized Socket.IO server instance.
- * @returns {Object} The Socket.IO server instance.
- * @throws {Error} If Socket.IO has not been initialized.
- */
 const getSocketIOInstance = () => {
     if (!socketServer) {
         throw new Error('Socket.io not initialized!');
