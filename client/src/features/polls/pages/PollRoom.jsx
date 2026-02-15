@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import usePollRoom from '../hooks/usePollRoom';
+import './PollRoom.css';
 
 const PollRoom = () => {
   const { id } = useParams();
@@ -20,8 +21,8 @@ const PollRoom = () => {
 
   if (loading) return <div className="loading">Loading poll details...</div>;
   if (error) return (
-    <div className="card error-container" style={{ textAlign: 'center' }}>
-        <div className="error-message" style={{ marginBottom: '1rem' }}>{error}</div>
+    <div className="card poll-room-error">
+        <div className="error-message poll-room-error-message">{error}</div>
         <button onClick={() => window.location.reload()} className="btn-secondary">Retry</button>
     </div>
   );
@@ -31,21 +32,8 @@ const PollRoom = () => {
 
   return (
     <div className="card">
-      <div style={{ 
-          marginBottom: '10px', 
-          fontSize: '12px', 
-          color: isConnected ? 'green' : 'orange',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '5px'
-      }}>
-        <span style={{ 
-            width: '8px', 
-            height: '8px', 
-            borderRadius: '50%', 
-            backgroundColor: isConnected ? 'green' : 'orange',
-            display: 'inline-block' 
-        }}></span>
+      <div className={`poll-room-header ${isConnected ? 'connected' : 'disconnected'}`}>
+        <span className={`poll-room-status-dot ${isConnected ? 'connected' : 'disconnected'}`}></span>
         {isConnected ? 'Live Connected' : 'Connecting...'}
       </div>
 
@@ -84,7 +72,7 @@ const PollRoom = () => {
         })}
       </div>
 
-      <div style={{ marginTop: '1.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+      <div className="poll-room-total-votes">
         Total Votes: {totalVotes}
       </div>
 
@@ -93,12 +81,11 @@ const PollRoom = () => {
             <p>Share this poll:</p>
             <input 
                 readOnly 
-                className="share-input" 
+                className="share-input poll-room-share-input" 
                 value={window.location.href} 
                 onClick={(e) => e.target.select()}
-                style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem' }}
             />
-            <button onClick={copyLink} className="btn-secondary" style={{ marginTop: '0.5rem', width: '100%' }}>
+            <button onClick={copyLink} className="btn-secondary poll-room-copy-btn">
                 Copy Link
             </button>
          </div>

@@ -31,9 +31,24 @@ const usePollRoom = (pollId) => {
     
     socketRef.current = newSocket;
 
-    newSocket.on('connect', () => setIsConnected(true));
-    newSocket.on('disconnect', () => setIsConnected(false));
-    newSocket.on('connect_error', () => setIsConnected(false));
+    newSocket.on('connect', () => {
+        console.log('Socket connected');
+        setIsConnected(true);
+    });
+
+    newSocket.on('disconnect', (reason) => {
+        console.log('Socket disconnected:', reason);
+        setIsConnected(false);
+    });
+
+    newSocket.on('connect_error', (err) => {
+        console.error('Socket connection error:', err.message);
+        setIsConnected(false);
+    });
+
+    newSocket.on('reconnect_attempt', (attempt) => {
+        console.log(`Reconnection attempt #${attempt}`);
+    });
     
     // Join Room
     newSocket.emit('joinPoll', pollId);
