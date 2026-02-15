@@ -12,12 +12,11 @@ if (config.env === 'production') {
 }
 
 // Dynamic CORS Configuration
-// Dynamic CORS Configuration
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
 
-    if (config.allowedOrigins.includes(origin)) {
+    if (origin === config.clientUrl) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

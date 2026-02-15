@@ -8,10 +8,7 @@ const voteLimiter = rateLimit({
     max: 10, 
     message: { success: false, error: 'Too many vote attempts for this poll. Try again later.' },
     standardHeaders: true, 
-    keyGenerator: (req) => {
-        return req.ip + "_" + req.params.id;
-    },
-    validate: { ip: false }
+    legacyHeaders: false
 });
 
 router.post('/', handleCreatePoll);

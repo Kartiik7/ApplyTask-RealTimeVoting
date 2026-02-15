@@ -99,7 +99,7 @@ class PollService {
               totalVotes: 1 
             } 
           },
-          { new: true, session }
+          { returnDocument: 'after', session }
         );
       });
     } catch (error) {
