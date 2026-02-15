@@ -100,9 +100,8 @@ const usePollRoom = (pollId) => {
       setHasVotedLocally(true);
       localStorage.setItem(`voted_${pollId}`, 'true');
     } catch (err) {
-      const msg = err.response?.data?.error || 'Failed to submit vote';
-      // Alert could be handled by UI showing error state, but keeping alert for now as per original
-      alert(msg);
+      const msg = err.response?.data?.message || err.message || 'Failed to submit vote';
+      (msg);
       
       if (err.response?.status === 403) {
           setHasVotedLocally(true);
