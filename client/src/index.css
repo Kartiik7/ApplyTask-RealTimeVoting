@@ -1,16 +1,6 @@
-:root {
-  --primary-color: #4f46e5;
-  --primary-hover: #4338ca;
-  --bg-color: #f3f4f6;
-  --card-bg: #ffffff;
-  --text-color: #1f2937;
-  --text-muted: #6b7280;
-  --error-color: #ef4444;
-  --success-color: #10b981;
-  --border-radius: 8px;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
+@import './styles/tokens.css';
 
+/* Global Reset & Base Styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -18,204 +8,33 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  font-family: var(--font-family);
+  background-color: var(--color-bg-body);
+  color: var(--color-text-primary);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.app-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  min-height: 100vh;
-}
-
-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-header h1 {
-  font-size: 2.5rem;
-  color: var(--primary-color);
-  font-weight: 800;
-  letter-spacing: -0.025em;
-}
-
-.card {
-  background: var(--card-bg);
-  padding: 2rem;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--text-color);
-}
-
-input[type="text"] {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-
-input[type="text"]:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
 button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
+  font-family: inherit;
 }
 
-.btn-primary {
-  background-color: var(--primary-color);
-  color: white;
-  width: 100%;
+input, textarea, select {
+  font-family: inherit;
 }
 
-.btn-primary:hover {
-  background-color: var(--primary-hover);
+/* Utility Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.btn-secondary {
-  background-color: var(--text-muted);
-  color: white;
-}
-
-.btn-remove {
-  background-color: #fee2e2;
-  color: var(--error-color);
-  padding: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-.btn-remove:hover {
-  background-color: #fecaca;
-}
-
-.error-message {
-  color: var(--error-color);
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background-color: #fee2e2;
-  border-radius: var(--border-radius);
-  text-align: center;
-}
-
-.success-message {
-    color: var(--success-color);
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-    background-color: #d1fae5;
-    border-radius: var(--border-radius);
-    text-align: center;
-}
-
-/* Poll Room Styles */
-.poll-question {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.option-button {
-  width: 100%;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: white;
-  border: 2px solid #e5e7eb;
-  border-radius: var(--border-radius);
-  text-align: left;
-  font-size: 1.1rem;
-  color: var(--text-color);
-  transition: all 0.2s;
-}
-
-.option-button:hover:not(:disabled) {
-  border-color: var(--primary-color);
-  background-color: #eff6ff;
-}
-
-.option-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.result-bar-container {
-  margin-bottom: 1rem;
-}
-
-.result-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.25rem;
-  font-weight: 500;
-}
-
-.result-track {
-  height: 12px;
-  background-color: #e5e7eb;
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.result-fill {
-  height: 100%;
-  background-color: var(--primary-color);
-  border-radius: 999px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.share-link-container {
-  margin-top: 2rem;
-  padding: 1rem;
-  background-color: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: var(--border-radius);
-  text-align: center;
-}
-
-.share-input {
-  margin-top: 0.5rem;
-  cursor: copy;
-}
-
-.loading {
-    text-align: center;
-    font-size: 1.25rem;
-    color: var(--text-muted);
-    padding: 2rem;
-}
-
-@media (max-width: 600px) {
-  .app-container {
-    padding: 1rem;
-  }
-  
-  header h1 {
-    font-size: 2rem;
-  }
+.fade-in {
+  animation: fadeIn var(--transition-normal) forwards;
 }

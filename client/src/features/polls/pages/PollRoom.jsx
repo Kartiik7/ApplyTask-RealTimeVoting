@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import usePollRoom from '../hooks/usePollRoom';
-import './PollRoom.css';
+import Layout from '../../../components/layout/Layout';
+import Card from '../../../components/ui/Card';
+import Button from '../../../components/ui/Button';
+import ProgressBar from '../../../components/ui/ProgressBar';
+import styles from './PollRoom.module.css';
 
 const PollRoom = () => {
   const { id } = useParams();
@@ -14,84 +18,110 @@ const PollRoom = () => {
     submitVote 
   } = usePollRoom(id);
 
+  const [copySuccess, setCopySuccess] = useState(false);
+
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
-    alert('Link copied to clipboard!');
+    setCopySuccess(true);
+    setTimeout(() => setCopySuccess(false), 2000);
   };
 
-  if (loading) return <div className="loading">Loading poll details...</div>;
-  if (error) return (
-    <div className="card poll-room-error">
-        <div className="error-message poll-room-error-message">{error}</div>
-        <button onClick={() => window.location.reload()} className="btn-secondary">Retry</button>
-    </div>
-  );
+  if (loading) {
+      return (
+          <Layout>
+              <div className={styles.loading}>
+                  <Button variant="ghost" isLoading>Loading poll details...</Button>
+              </div>
+          </Layout>
+      );
+  }
+
+  if (error) {
+      return (
+          <Layout>
+            <Card className={styles.error}>
+                <p>{error}</p>
+                <Button variant="secondary" onClick={() => window.location.reload()} style={{ marginTop: '1rem' }}>
+                    Retry Connection
+                </Button>
+            </Card>
+          </Layout>
+      );
+  }
+
   if (!currentPoll) return null;
 
   const totalVotes = currentPoll.totalVotes || 0;
 
   return (
-    <div className="card">
-      <div className={`poll-room-header ${isConnected ? 'connected' : 'disconnected'}`}>
-        <span className={`poll-room-status-dot ${isConnected ? 'connected' : 'disconnected'}`}></span>
-        {isConnected ? 'Live Connected' : 'Connecting...'}
-      </div>
+    <Layout>
+      <Card>
+        <div className={`${styles.status} ${isConnected ? styles.connected : styles.disconnected}`}>
+          <span className={styles.statusDot}></span>
+          {isConnected ? 'Live Connected' : 'Connecting...'}
+        </div>
 
-      <div className="poll-question">{currentPoll.question}</div>
+        <h2 className={styles.question}>{currentPoll.question}</h2>
 
-      <div className="options-list">
-        {currentPoll.options.map((option, index) => {
-          const percentage = totalVotes === 0 ? 0 : Math.round((option.votes / totalVotes) * 100);
-          
-          return (
-            <div key={index} className="result-bar-container">
-              {!hasVotedLocally ? (
-                <button
-                  className="option-button"
-                  onClick={() => submitVote(index)}
-                  disabled={!isConnected} 
-                >
-                  {option.text}
-                </button>
-              ) : (
-                <>
-                  <div className="result-header">
+        <div className={styles.optionsList}>
+          {currentPoll.options.map((option, index) => {
+            const percentage = totalVotes === 0 ? 0 : Math.round((option.votes / totalVotes) * 100);
+            
+            if (!hasVotedLocally) {
+                return (
+                    <Button
+                        key={index}
+                        variant="ghost" 
+                        className={styles.optionButton}
+                        onClick={() => submitVote(index)}
+                        disabled={!isConnected}
+                        fullWidth
+                    >
+                        {option.text}
+                    </Button>
+                );
+            }
+
+            return (
+              <div key={index} className={styles.resultItem}>
+                <div className={styles.resultMeta}>
                     <span>{option.text}</span>
-                    <span>{percentage}% ({option.votes} votes)</span>
-                  </div>
-                  <div className="result-track">
-                    <div
-                      className="result-fill"
-                      style={{ width: `${percentage}%` }}
-                    ></div>
-                  </div>
-                </>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                    <span>{percentage}%</span>
+                </div>
+                <ProgressBar value={percentage} variant="primary" />
+                {/* Optional: Show vote count explicitly if needed, but keeping it minimal for now based on 'Notion/dribbble' style */}
+              </div>
+            );
+          })}
+        </div>
 
-      <div className="poll-room-total-votes">
-        Total Votes: {totalVotes}
-      </div>
+        <div className={styles.totalVotes}>
+          {totalVotes} vote{totalVotes !== 1 ? 's' : ''} recorded
+        </div>
 
-      {hasVotedLocally && (
-         <div className="share-link-container">
-            <p>Share this poll:</p>
-            <input 
-                readOnly 
-                className="share-input poll-room-share-input" 
-                value={window.location.href} 
-                onClick={(e) => e.target.select()}
-            />
-            <button onClick={copyLink} className="btn-secondary poll-room-copy-btn">
-                Copy Link
-            </button>
-         </div>
-      )}
-      
-    </div>
+        {hasVotedLocally && (
+           <div className={styles.shareSection}>
+              <p className={styles.shareTitle}>Invite others to vote</p>
+              <div className={styles.shareRow}>
+                  <input 
+                      readOnly 
+                      className={styles.shareInput} 
+                      value={window.location.href} 
+                      onClick={(e) => e.target.select()}
+                  />
+                  <Button 
+                    size="sm" 
+                    variant={copySuccess ? "success" : "secondary"} // Ensure your Button component handles 'success' variant or map it manually
+                    onClick={copyLink}
+                    className={styles.copyButton}
+                  >
+                      {copySuccess ? 'Copied!' : 'Copy'}
+                  </Button>
+              </div>
+           </div>
+        )}
+      </Card>
+    </Layout>
   );
 };
 

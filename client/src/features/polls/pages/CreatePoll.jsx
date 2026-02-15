@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useCreatePoll from '../hooks/useCreatePoll';
+import Layout from '../../../components/layout/Layout';
+import Card from '../../../components/ui/Card';
+import Input from '../../../components/ui/Input';
+import Button from '../../../components/ui/Button';
+import styles from './CreatePoll.module.css';
 
 const CreatePoll = () => {
   const {
     question,
     pollOptions,
-    error,
+    error: submitError,
     loading,
     handleQuestionChange,
     handleOptionChange,
@@ -17,80 +22,121 @@ const CreatePoll = () => {
     MAX_OPTIONS
   } = useCreatePoll();
 
+  const [touched, setTouched] = useState({ question: false, options: [] });
+
+  const handleBlur = (field, index = null) => {
+    if (field === 'question') {
+      setTouched(prev => ({ ...prev, question: true }));
+    } else if (field === 'option' && index !== null) {
+      setTouched(prev => {
+        const newOptions = [...(prev.options || [])];
+        newOptions[index] = true;
+        return { ...prev, options: newOptions };
+      });
+    }
+  };
+
+  const getQuestionError = () => {
+    if (touched.question && !question.trim()) return 'Question is required';
+    if (question.length >= MAX_QUESTION_LENGTH) return 'Question is too long';
+    return null;
+  };
+
+  const getOptionError = (index) => {
+      // Only show error if touched or if submitting
+      if (touched.options?.[index] && !pollOptions[index]?.trim()) {
+          return 'Option text is required';
+      }
+      return null;
+  }
+
   return (
-    <div className="card">
-      <h2 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Create a New Poll</h2>
-      
-      {error && <div className="error-message" role="alert">{error}</div>}
-      
-      <form onSubmit={submitPoll}>
-        <div className="form-group">
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <label htmlFor="question">Question</label>
-            <span style={{ fontSize: '0.8rem', color: question.length > MAX_QUESTION_LENGTH ? 'red' : '#666' }}>
-                {question.length}/{MAX_QUESTION_LENGTH}
-            </span>
+    <Layout>
+      <Card>
+        <h2 className={styles.title}>Create a New Poll</h2>
+        
+        {submitError && (
+          <div className="error-message" role="alert">
+            {submitError}
           </div>
-          <input
-            type="text"
+        )}
+        
+        <form onSubmit={submitPoll} className={styles.form}>
+          <Input 
+            label="Question"
             id="question"
             placeholder="What would you like to ask?"
             value={question}
             onChange={handleQuestionChange}
+            onBlur={() => handleBlur('question')}
             disabled={loading}
-            className={error && !question.trim() ? 'input-error' : ''}
+            maxLength={MAX_QUESTION_LENGTH}
+            showCount
+            error={getQuestionError()}
           />
-        </div>
 
-        <div className="form-group">
-          <label>Options ({pollOptions.length}/{MAX_OPTIONS})</label>
-          {pollOptions.map((option, index) => (
-            <div key={index} style={{ marginBottom: '0.5rem' }}>
-                <div style={{ display: 'flex' }}>
-                  <input
-                    type="text"
-                    placeholder={`Option ${index + 1}`}
-                    value={option}
-                    onChange={(e) => handleOptionChange(index, e.target.value)}
-                    disabled={loading}
-                    style={{ flex: 1 }}
-                  />
-                  {pollOptions.length > 2 && (
-                    <button
-                      type="button"
-                      className="btn-remove"
-                      onClick={() => removeOption(index)}
+          <div>
+             <div className={styles.sectionTitle}>
+                <span>Options ({pollOptions.length}/{MAX_OPTIONS})</span>
+             </div>
+             
+             <div className={styles.optionsList}>
+                {pollOptions.map((option, index) => (
+                  <div key={index} className={styles.optionRow}>
+                    <Input
+                      placeholder={`Option ${index + 1}`}
+                      value={option}
+                      onChange={(e) => handleOptionChange(index, e.target.value)}
+                      onBlur={() => handleBlur('option', index)}
                       disabled={loading}
-                      aria-label="Remove option"
-                    >
-                      ✕
-                    </button>
-                  )}
-                </div>
-                <div style={{ textAlign: 'right', fontSize: '0.7rem', color: '#888', marginTop: '2px' }}>
-                    {option.length}/{MAX_OPTION_LENGTH}
-                </div>
+                      maxLength={MAX_OPTION_LENGTH}
+                      showCount
+                      containerClassName="flex-1"
+                      error={getOptionError(index)}
+                    />
+                    
+                    {pollOptions.length > 2 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={styles.removeBtn}
+                        onClick={() => removeOption(index)}
+                        disabled={loading}
+                        aria-label="Remove option"
+                        title="Remove option"
+                      >
+                        ✕
+                      </Button>
+                    )}
+                  </div>
+                ))}
             </div>
-          ))}
-        </div>
+          </div>
 
-        <div style={{ marginBottom: '1.5rem' }}>
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={addOption}
-            style={{ width: '100%' }}
-            disabled={loading || pollOptions.length >= MAX_OPTIONS}
+          <div className={styles.actions}>
+            <Button
+              variant="secondary"
+              onClick={addOption}
+              disabled={loading || pollOptions.length >= MAX_OPTIONS}
+              fullWidth
+            >
+              + Add Option
+            </Button>
+          </div>
+
+          <Button 
+            type="submit" 
+            variant="primary" 
+            fullWidth 
+            size="lg"
+            isLoading={loading}
+            disabled={!question.trim() || pollOptions.some(opt => !opt.trim())}
           >
-            + Add Option
-          </button>
-        </div>
-
-        <button type="submit" className="btn-primary" disabled={loading}>
-          {loading ? 'Creating Poll...' : 'Create Poll'}
-        </button>
-      </form>
-    </div>
+            Create Poll
+          </Button>
+        </form>
+      </Card>
+    </Layout>
   );
 };
 

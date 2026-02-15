@@ -1,0 +1,44 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-6);
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-3);
+  display: flex;
+  justify-content: space-between;
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.optionRow {
+  display: flex;
+  gap: var(--spacing-2);
+  align-items: flex-start;
+}
+
+.removeBtn {
+  margin-top: 1px; /* Align with input */
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-4);
+}
