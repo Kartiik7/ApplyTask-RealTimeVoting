@@ -10,7 +10,6 @@ const usePollRoom = (pollId) => {
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef(null);
 
-  // Get or create unique vote token
   const getVoteToken = () => {
     let token = localStorage.getItem('vote_token');
     if (!token) {
@@ -23,7 +22,6 @@ const usePollRoom = (pollId) => {
   useEffect(() => {
     if (!pollId) return;
 
-    // Initialize Socket
     const newSocket = io(import.meta.env.VITE_API_BASE || 'http://localhost:5000', {
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
@@ -50,15 +48,12 @@ const usePollRoom = (pollId) => {
         console.log(`Reconnection attempt #${attempt}`);
     });
     
-    // Join Room
     newSocket.emit('joinPoll', pollId);
 
-    // Listen for updates
     newSocket.on('updateResults', (updatedPoll) => {
         setCurrentPoll(updatedPoll);
     });
 
-    // Initial Fetch
     const fetchPoll = async () => {
       try {
         setLoading(true);

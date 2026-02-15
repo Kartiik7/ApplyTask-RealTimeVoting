@@ -43,7 +43,6 @@ const useCreatePoll = () => {
     e.preventDefault();
     setError('');
     
-    // Validation
     if (!question.trim()) {
       setError('Please enter a question');
       return;
