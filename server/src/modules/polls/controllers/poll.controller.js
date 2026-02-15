@@ -16,6 +16,9 @@ exports.handleVotePoll = asyncHandler(async (req, res) => {
   const { optionIndex, voteToken } = req.body;
   const pollId = req.params.id;
   
-  const pollWithNewVote = await pollService.submitVote(pollId, optionIndex, voteToken);
+  // Get IP address (handle proxy/load balancer case)
+  const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+  const pollWithNewVote = await pollService.submitVote(pollId, optionIndex, voteToken, ipAddress);
   res.status(200).json({ success: true, poll: pollWithNewVote });
 });

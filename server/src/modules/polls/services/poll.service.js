@@ -36,7 +36,7 @@ class PollService {
     return fetchedPoll;
   }
 
-  async submitVote(pollId, optionIndex, voteToken) {
+  async submitVote(pollId, optionIndex, voteToken, ipAddress) {
     if (!voteToken || typeof voteToken !== 'string' || voteToken.trim().length === 0) {
       throw { status: 400, message: 'Valid vote token is required' };
     }
@@ -58,10 +58,17 @@ class PollService {
         }
 
         try {
-          await VoteTracking.create([{ pollId, tokenHash: hashedVoteToken }], { session });
+          // Track vote by Token AND IP
+          await VoteTracking.create([{ 
+              pollId, 
+              tokenHash: hashedVoteToken,
+              ipAddress: ipAddress 
+          }], { session });
+
         } catch (voteTrackingError) {
           if (voteTrackingError.code === 11000) {
-            throw { status: 403, message: 'You have already voted in this poll' };
+            // Check which index caused the violation if possible, otherwise generic message
+            throw { status: 403, message: 'You have already voted in this poll (Duplicate IP or Token)' };
           }
           throw voteTrackingError;
         }
