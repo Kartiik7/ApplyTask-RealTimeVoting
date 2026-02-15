@@ -16,8 +16,18 @@ exports.handleVotePoll = asyncHandler(async (req, res) => {
   const { optionIndex, voteToken } = req.body;
   const pollId = req.params.id;
   
-  // Get IP address (handle proxy/load balancer case)
-  const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  // Robust IP extraction
+  let ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+  
+  // If x-forwarded-for contains multiple IPs, take the first one
+  if (ipAddress.includes(',')) {
+      ipAddress = ipAddress.split(',')[0].trim();
+  }
+
+  // Normalize IPv6 localhost
+  if (ipAddress === '::1') ipAddress = '127.0.0.1';
+
+  console.log(`[Vote Attempt] Poll: ${pollId}, IP: ${ipAddress}, Token: ${voteToken.substring(0, 10)}...`);
 
   const pollWithNewVote = await pollService.submitVote(pollId, optionIndex, voteToken, ipAddress);
   res.status(200).json({ success: true, poll: pollWithNewVote });

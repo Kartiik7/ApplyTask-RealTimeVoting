@@ -66,6 +66,7 @@ class PollService {
           }], { session });
 
         } catch (voteTrackingError) {
+          console.log('[VoteTracking Error]', voteTrackingError.code, voteTrackingError.message);
           if (voteTrackingError.code === 11000) {
             // Check which index caused the violation if possible, otherwise generic message
             throw { status: 403, message: 'You have already voted in this poll (Duplicate IP or Token)' };
