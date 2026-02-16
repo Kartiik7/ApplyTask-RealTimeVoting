@@ -61,15 +61,54 @@
 }
 
 .resultItem {
-  margin-bottom: var(--spacing-4);
+  position: relative;
+  margin-bottom: var(--spacing-3);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  background-color: var(--color-bg-card);
+  overflow: hidden;
+  transition: border-color var(--transition-normal);
+  min-height: 60px;
+  display: flex;
+  align-items: center;
 }
 
-.resultMeta {
+.resultItem.selected {
+  box-shadow: var(--shadow-md);
+}
+
+.resultFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: var(--radius-md);
+  z-index: 0;
+}
+
+.resultContent {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
-  margin-bottom: var(--spacing-1);
+  align-items: center;
+  width: 100%;
   font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium); 
+  font-weight: var(--font-weight-medium);
+}
+
+.optionText {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.percentage {
+  font-weight: var(--font-weight-bold);
+  transition: color var(--transition-normal);
+  font-size: var(--font-size-lg);
 }
 
 .totalVotes {

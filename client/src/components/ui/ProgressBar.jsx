@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './ProgressBar.module.css';
 
 const ProgressBar = ({ 
@@ -7,9 +7,23 @@ const ProgressBar = ({
   variant = 'primary', 
   label, 
   showValue = false, 
-  className = '' 
+  className = '',
+  animate = false
 }) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
+  const [animatedPercentage, setAnimatedPercentage] = useState(animate ? 0 : percentage);
+  
+  useEffect(() => {
+    if (animate) {
+      // Small delay before starting animation for better visual effect
+      const timer = setTimeout(() => {
+        setAnimatedPercentage(percentage);
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      setAnimatedPercentage(percentage);
+    }
+  }, [percentage, animate]);
   
   return (
     <div className={`${styles.container} ${className}`}>
@@ -21,8 +35,8 @@ const ProgressBar = ({
       )}
       <div className={styles.track} role="progressbar" aria-valuenow={value} aria-valuemin="0" aria-valuemax={max}>
         <div 
-          className={`${styles.fill} ${styles[variant]}`} 
-          style={{ width: `${percentage}%` }}
+          className={`${styles.fill} ${styles[variant]} ${animate ? styles.animated : ''}`} 
+          style={{ width: `${animatedPercentage}%` }}
         />
       </div>
     </div>

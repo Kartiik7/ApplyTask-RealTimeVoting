@@ -4,7 +4,6 @@ import usePollRoom from '../hooks/usePollRoom';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/ui/Card';
 import Button from '../../../components/ui/Button';
-import ProgressBar from '../../../components/ui/ProgressBar';
 import styles from './PollRoom.module.css';
 
 const PollRoom = () => {
@@ -19,11 +18,33 @@ const PollRoom = () => {
   } = usePollRoom(id);
 
   const [copySuccess, setCopySuccess] = useState(false);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
+
+  const handleVote = async (optionIndex) => {
+    setSelectedOptionIndex(optionIndex);
+    await submitVote(optionIndex);
+  };
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopySuccess(true);
     setTimeout(() => setCopySuccess(false), 2000);
+  };
+
+  // Color palette for poll options - consistent for all users
+  const optionColors = [
+    { fill: 'rgba(59, 130, 246, 0.30)', border: 'rgb(59, 130, 246)' },      // Blue
+    { fill: 'rgba(16, 185, 129, 0.30)', border: 'rgb(16, 185, 129)' },      // Green
+    { fill: 'rgba(245, 158, 11, 0.30)', border: 'rgb(245, 158, 11)' },      // Amber
+    { fill: 'rgba(239, 68, 68, 0.30)', border: 'rgb(239, 68, 68)' },        // Red
+    { fill: 'rgba(168, 85, 247, 0.30)', border: 'rgb(168, 85, 247)' },      // Purple
+    { fill: 'rgba(236, 72, 153, 0.30)', border: 'rgb(236, 72, 153)' },      // Pink
+    { fill: 'rgba(20, 184, 166, 0.30)', border: 'rgb(20, 184, 166)' },      // Teal
+    { fill: 'rgba(251, 146, 60, 0.30)', border: 'rgb(251, 146, 60)' },      // Orange
+  ];
+
+  const getOptionColor = (index) => {
+    return optionColors[index % optionColors.length];
   };
 
   if (loading) {
@@ -73,7 +94,7 @@ const PollRoom = () => {
                         key={index}
                         variant="ghost" 
                         className={styles.optionButton}
-                        onClick={() => submitVote(index)}
+                        onClick={() => handleVote(index)}
                         disabled={!isConnected}
                         fullWidth
                     >
@@ -82,14 +103,33 @@ const PollRoom = () => {
                 );
             }
 
+            const isSelected = selectedOptionIndex === index;
+            const colors = getOptionColor(index);
+            
             return (
-              <div key={index} className={styles.resultItem}>
-                <div className={styles.resultMeta}>
-                    <span>{option.text}</span>
-                    <span>{percentage}%</span>
+              <div 
+                key={index} 
+                className={`${styles.resultItem} ${isSelected ? styles.selected : ''}`}
+                style={{
+                  borderColor: isSelected ? colors.border : 'var(--color-border)'
+                }}
+              >
+                <div 
+                  className={styles.resultFill}
+                  style={{ 
+                    width: `${percentage}%`,
+                    backgroundColor: colors.fill
+                  }}
+                />
+                <div className={styles.resultContent}>
+                  <span className={styles.optionText}>{option.text}</span>
+                  <span 
+                    className={styles.percentage}
+                    style={{ color: isSelected ? colors.border : 'var(--color-text-secondary)' }}
+                  >
+                    {percentage}%
+                  </span>
                 </div>
-                <ProgressBar value={percentage} variant="primary" />
-                {/* Optional: Show vote count explicitly if needed, but keeping it minimal for now based on 'Notion/dribbble' style */}
               </div>
             );
           })}
