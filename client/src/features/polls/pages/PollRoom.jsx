@@ -31,16 +31,16 @@ const PollRoom = () => {
     setTimeout(() => setCopySuccess(false), 2000);
   };
 
-  // Color palette for poll options - consistent for all users
+  // Color palette for poll options - warm colors to complement yellow theme
   const optionColors = [
-    { fill: 'rgba(59, 130, 246, 0.30)', border: 'rgb(59, 130, 246)' },      // Blue
-    { fill: 'rgba(16, 185, 129, 0.30)', border: 'rgb(16, 185, 129)' },      // Green
-    { fill: 'rgba(245, 158, 11, 0.30)', border: 'rgb(245, 158, 11)' },      // Amber
-    { fill: 'rgba(239, 68, 68, 0.30)', border: 'rgb(239, 68, 68)' },        // Red
-    { fill: 'rgba(168, 85, 247, 0.30)', border: 'rgb(168, 85, 247)' },      // Purple
-    { fill: 'rgba(236, 72, 153, 0.30)', border: 'rgb(236, 72, 153)' },      // Pink
-    { fill: 'rgba(20, 184, 166, 0.30)', border: 'rgb(20, 184, 166)' },      // Teal
+    { fill: 'rgba(244, 196, 48, 0.30)', border: 'rgb(244, 196, 48)' },      // Warm Yellow (primary)
     { fill: 'rgba(251, 146, 60, 0.30)', border: 'rgb(251, 146, 60)' },      // Orange
+    { fill: 'rgba(239, 68, 68, 0.30)', border: 'rgb(239, 68, 68)' },        // Red
+    { fill: 'rgba(236, 72, 153, 0.30)', border: 'rgb(236, 72, 153)' },      // Pink
+    { fill: 'rgba(168, 85, 247, 0.30)', border: 'rgb(168, 85, 247)' },      // Purple
+    { fill: 'rgba(59, 130, 246, 0.30)', border: 'rgb(59, 130, 246)' },      // Blue
+    { fill: 'rgba(20, 184, 166, 0.30)', border: 'rgb(20, 184, 166)' },      // Teal
+    { fill: 'rgba(34, 197, 94, 0.30)', border: 'rgb(34, 197, 94)' },        // Green
   ];
 
   const getOptionColor = (index) => {

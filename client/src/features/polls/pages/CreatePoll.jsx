@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import io from 'socket.io-client';
 import useCreatePoll from '../hooks/useCreatePoll';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/ui/Card';
@@ -23,6 +24,36 @@ const CreatePoll = () => {
   } = useCreatePoll();
 
   const [touched, setTouched] = useState({ question: false, options: [] });
+  const [isConnected, setIsConnected] = useState(false);
+  const socketRef = useRef(null);
+
+  useEffect(() => {
+    const newSocket = io(import.meta.env.VITE_API_URL, {
+      withCredentials: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+    
+    socketRef.current = newSocket;
+
+    newSocket.on('connect', () => {
+      setIsConnected(true);
+    });
+
+    newSocket.on('disconnect', () => {
+      setIsConnected(false);
+    });
+
+    newSocket.on('connect_error', () => {
+      setIsConnected(false);
+    });
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, []);
 
   const handleBlur = (field, index = null) => {
     if (field === 'question') {
@@ -53,6 +84,11 @@ const CreatePoll = () => {
   return (
     <Layout>
       <Card>
+        <div className={`${styles.status} ${isConnected ? styles.connected : styles.disconnected}`}>
+          <span className={styles.statusDot}></span>
+          {isConnected ? 'Server Connected' : 'Connecting to server...'}
+        </div>
+        
         <h2 className={styles.title}>Create a New Poll</h2>
         
         {submitError && (

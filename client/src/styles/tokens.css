@@ -1,25 +1,26 @@
 :root {
-  /* Colors */
-  --color-primary: #4f46e5;       /* Indigo 600 */
-  --color-primary-hover: #4338ca; /* Indigo 700 */
-  --color-primary-subtle: #e0e7ff; /* Indigo 100 */
+  /* Colors - Pinterest-style Yellow Theme */
+  --color-primary: #F4C430;       /* Rich Warm Yellow */
+  --color-primary-hover: #E0B020; /* Primary Dark (Hover/Active) */
+  --color-primary-subtle: #FEF3C7; /* Light yellow tint for subtle backgrounds */
   
-  --color-bg-body: #f9fafb;       /* Gray 50 */
-  --color-bg-card: #ffffff;       /* White */
-  --color-bg-input: #ffffff;
+  --color-bg-body: #F9FAFB;       /* Soft Off White */
+  --color-bg-card: #FFFFFF;       /* Surface (Cards) */
+  --color-bg-input: #FFFFFF;
+  --color-bg-secondary: #E5E7EB;  /* Neutral Light (for inactive elements) */
   
-  --color-text-primary: #111827;  /* Gray 900 */
-  --color-text-secondary: #6b7280; /* Gray 500 */
-  --color-text-disabled: #9ca3af; /* Gray 400 */
-  --color-text-inverse: #ffffff;
+  --color-text-primary: #111827;  /* Deep Charcoal */
+  --color-text-secondary: #6B7280; /* Text Secondary */
+  --color-text-disabled: #9CA3AF; /* Gray 400 */
+  --color-text-inverse: #111827;  /* Dark text on yellow backgrounds */
 
-  --color-border: #e5e7eb;        /* Gray 200 */
-  --color-border-focus: #4f46e5;
+  --color-border: #E5E7EB;        /* Neutral Light (Borders/Separators) */
+  --color-border-focus: #F4C430;  /* Yellow focus state */
   
-  --color-error: #ef4444;         /* Red 500 */
-  --color-error-bg: #fee2e2;      /* Red 100 */
-  --color-success: #10b981;       /* Emerald 500 */
-  --color-success-bg: #d1fae5;    /* Emerald 100 */
+  --color-error: #EF4444;         /* Danger Accent */
+  --color-error-bg: #FEE2E2;      /* Red 100 */
+  --color-success: #22C55E;       /* Success Accent */
+  --color-success-bg: #D1FAE5;    /* Emerald 100 */
 
   /* Typography */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
